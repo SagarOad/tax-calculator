@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-// import Head from "next/head";
-// import { useMetadata } from "../hooks/useMetadata";
+import { Pie } from "react-chartjs-2";
+import { Chart } from "chart.js/auto";
 
 const page = () => {
-
-
   const [monthlySalary, setMonthlySalary] = useState("");
   const [results, setResults] = useState({
     monthlySalary: 0,
@@ -36,119 +34,137 @@ const page = () => {
     const monthlySalaryAfterTax = annualSalaryAfterTax / 12;
 
     setResults({
-      monthlySalary: Number(monthlySalary).toLocaleString(),
-      monthlyTax: monthlyTax.toLocaleString(),
-      monthlySalaryAfterTax: monthlySalaryAfterTax.toLocaleString(),
-      annualSalary: Number(annualSalary).toLocaleString(),
-      annualTax: annualTax.toLocaleString(),
-      annualSalaryAfterTax: annualSalaryAfterTax.toLocaleString(),
+      monthlySalary: Number(monthlySalary),
+      monthlyTax: monthlyTax,
+      monthlySalaryAfterTax: monthlySalaryAfterTax,
+      annualSalary: annualSalary,
+      annualTax: annualTax,
+      annualSalaryAfterTax: annualSalaryAfterTax,
     });
+  };
+
+  const chartData = {
+    labels: ["Annual Tax", "Annual Salary After Tax"],
+    datasets: [
+      {
+        data: [results.annualTax, results.annualSalaryAfterTax],
+        backgroundColor: ["#FF6384", "#36A2EB"],
+        hoverBackgroundColor: ["#FF6384", "#36A2EB"],
+      },
+    ],
   };
 
   return (
     <>
-      <div className="flex bg-gray-100 h-[100vh]">
-        <div className="container mx-auto my-8 grid grid-cols-1 rounded-lg bg-white p-4 shadow-lg sm:p-8 lg:grid-cols-12">
-          <div className="col-span-4 mb-8 lg:mr-12">
-            <div>
-              <h1 className="mb-6 text-3xl font-bold text-black sm:text-4xl">
-                Salary{" "}
-                <span className=" bg-[#f26122] bg-clip-text text-transparent">
-                  Tax Calculator
-                </span>
-              </h1>
-              <p className="text-lg text-black sm:text-[18px]">
-                Apart from compliance, signing up with our online tax return
-                portal allows you to access an easy to use tax return calculator
-                that lays out all figures for you in a comprehensible manner.
-                Our salary tax calculator is constantly updated with the latest
-                regulations and tax rates in Pakistan.
-              </p>
-            </div>
-          </div>
-          <div className="col-span-8">
-            <div className="border-2 border-[#00000032] p-4 sm:p-8">
-              <div className="mx-auto w-full max-w-md">
-                <form
-                  onSubmit={handleSubmit}
-                  className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4"
-                >
-                  <input
-                    type="number"
-                    className="w-full rounded-md border bg-white px-3 py-2 text-black"
-                    placeholder="Enter your monthly salary"
-                    value={monthlySalary}
-                    onChange={(e) => setMonthlySalary(e.target.value)}
-                    required
-                  />
-                  <button
-                    type="submit"
-                    className="bg-orange-500 rounded-md bg-[#21346d] px-5 py-2 font-semibold text-white transition duration-200"
-                  >
-                    Calculate
-                  </button>
-                </form>
-              </div>
+      <div className="flex flex-col bg-gray-100 min-h-screen">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-4 px-8">
+          <h1 className="text-4xl font-bold">Enhanced Salary Tax Calculator</h1>
+          <p className="text-lg mt-2">
+            A comprehensive tool to calculate your taxes and visualize your income breakdown.
+          </p>
+        </div>
 
-              <div className="mx-auto mt-8 grid max-w-[900px] grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <div className="border-2 border-[#e8e8e8] py-4 text-center shadow-xl shadow-[#21346d3a]">
-                  <div className="mt-2 bg-[#21346d1f] py-4">
-                    <h2 className="mb-2 bg-[#21346d] bg-clip-text text-xl font-medium text-transparent">
-                      Monthly Salary
-                    </h2>
-                    <h2 className="text-xl font-bold text-black">
-                      {results.monthlySalary}
-                    </h2>
-                  </div>
-                  <div className="py-4">
-                    <h2 className="mb-2 bg-[#21346d] bg-clip-text text-xl font-medium text-transparent">
-                      Yearly Salary
-                    </h2>
-                    <h2 className="text-xl font-bold text-black">
-                      {results.annualSalary}
-                    </h2>
-                  </div>
+        {/* Content */}
+        <div className="container mx-auto my-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Left Section */}
+          <div className="col-span-4 bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-2xl font-bold text-black mb-4">About This Tool</h2>
+            <p className="text-gray-700 mb-4">
+              This calculator helps you understand your income distribution based on the latest
+              tax regulations in Pakistan. It provides detailed insights into your monthly and
+              yearly salary, tax deductions, and take-home income.
+            </p>
+            <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+              <input
+                type="number"
+                className="w-full rounded-md border px-4 py-2 text-gray-800"
+                placeholder="Enter your monthly salary"
+                value={monthlySalary}
+                onChange={(e) => setMonthlySalary(e.target.value)}
+                required
+              />
+              <button
+                type="submit"
+                className="bg-blue-600 text-white font-semibold px-6 py-2 rounded-md hover:bg-blue-700"
+              >
+                Calculate
+              </button>
+            </form>
+          </div>
+
+          {/* Right Section */}
+          <div className="col-span-8 bg-white p-6 rounded-lg shadow-lg">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Monthly and Yearly Details */}
+              {Object.entries(results).map(([key, value]) => (
+                <div
+                  key={key}
+                  className="border rounded-lg p-4 shadow-md text-center bg-gray-50"
+                >
+                  <h3 className="text-lg font-semibold text-gray-700 capitalize">
+                    {key.replace(/([A-Z])/g, " $1")}
+                  </h3>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {value.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                  </p>
                 </div>
-                <div className="border-2 border-[#e8e8e8] py-4 text-center shadow-xl shadow-[#21346d3a]">
-                  <div className="mt-2 bg-[#21346d1f] py-4">
-                    <h2 className="mb-2 bg-[#21346d] bg-clip-text text-xl font-medium text-transparent">
-                      Monthly Tax
-                    </h2>
-                    <h2 className="text-xl font-bold text-black">
-                      {results.monthlyTax}
-                    </h2>
-                  </div>
-                  <div className="py-4">
-                    <h2 className="mb-2 bg-[#21346d] bg-clip-text text-xl font-medium text-transparent">
-                      Yearly Tax
-                    </h2>
-                    <h2 className="text-xl font-bold text-black">
-                      {results.annualTax}
-                    </h2>
-                  </div>
-                </div>
-                <div className="border-2 border-[#e8e8e8] py-4 text-center shadow-xl shadow-[#21346d3a]">
-                  <div className="mt-2 bg-[#21346d1f] py-4">
-                    <h2 className="mb-2 bg-[#21346d] bg-clip-text text-xl font-medium text-transparent">
-                      Salary After Tax
-                    </h2>
-                    <h2 className="text-xl font-bold text-black">
-                      {results.monthlySalaryAfterTax}
-                    </h2>
-                  </div>
-                  <div className="py-4">
-                    <h2 className="mb-2 bg-[#21346d] bg-clip-text text-xl font-medium text-transparent">
-                      Salary After Tax (Yearly)
-                    </h2>
-                    <h2 className="text-xl font-bold text-black">
-                      {results.annualSalaryAfterTax}
-                    </h2>
-                  </div>
-                </div>
-              </div>
+              ))}
+            </div>
+
+            {/* Chart */}
+            <div className="mt-8">
+              <h3 className="text-xl font-bold text-gray-700 mb-4">Income Distribution</h3>
+              <Pie data={chartData} />
+            </div>
+
+            {/* Tax Bracket Table */}
+            <div className="mt-8">
+              <h3 className="text-xl font-bold text-gray-700 mb-4">Tax Brackets</h3>
+              <table className="table-auto w-full border-collapse border text-black border-gray-300">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="border border-gray-300 px-4 py-2">Income Range</th>
+                    <th className="border border-gray-300 px-4 py-2">Tax Rate</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="border border-gray-300 px-4 py-2">Up to 600,000</td>
+                    <td className="border border-gray-300 px-4 py-2">0%</td>
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-300 px-4 py-2">600,001 - 1,200,000</td>
+                    <td className="border border-gray-300 px-4 py-2">5%</td>
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-300 px-4 py-2">1,200,001 - 2,200,000</td>
+                    <td className="border border-gray-300 px-4 py-2">15%</td>
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-300 px-4 py-2">2,200,001 - 3,200,000</td>
+                    <td className="border border-gray-300 px-4 py-2">25%</td>
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-300 px-4 py-2">3,200,001 - 4,100,000</td>
+                    <td className="border border-gray-300 px-4 py-2">30%</td>
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-300 px-4 py-2">Above 4,100,000</td>
+                    <td className="border border-gray-300 px-4 py-2">35%</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
+
+        {/* Footer */}
+        <footer className="bg-gray-800 text-white py-4 mt-auto">
+          <div className="container mx-auto text-center">
+            <p>Created by Arham</p>
+          </div>
+        </footer>
       </div>
     </>
   );
